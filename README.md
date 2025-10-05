@@ -1,96 +1,81 @@
-# Predictive Maintenance for Military Equipment
+# Predictive Maintenance — Notebook: `pmme1.ipynb`
 
-## Project Overview
+This repository contains a single exploratory notebook (`pmme1.ipynb`) and the sample dataset `train_FD001.txt` used to build a baseline Remaining Useful Life (RUL) regression model for equipment (engine) degradation. The README here has been updated to match what the notebook actually does.
 
-This project aims to develop a predictive maintenance system for military equipment using data science techniques. By analyzing historical sensor data, maintenance logs, and operational parameters, we will predict potential equipment failures before they occur, enabling proactive maintenance and minimizing downtime. This will lead to increased operational readiness, reduced maintenance costs, and enhanced safety for military personnel.
+## What this notebook does (summary)
 
-## Problem Statement
+- Loads the dataset `train_FD001.txt` (plain text, space-separated). The file has 26 columns per row: `engine_id`, `cycle`, 3 operation settings, and 21 sensor readings.
+- Assigns descriptive column names and computes the target variable RUL (Remaining Useful Life) per row by subtracting the current cycle from the engine's maximum cycle.
+- Performs basic EDA: descriptive statistics, RUL trend plots for engines, distribution of RUL, and a correlation heatmap for selected features.
+- Performs simple feature selection (a hand-picked list of sensors and settings used in the notebook) and scales features with StandardScaler.
+- Trains a RandomForestRegressor on the processed data and evaluates it on a hold-out test split. Reports MAE, MSE, RMSE, and R².
+- Produces diagnostic plots: residuals vs predicted, actual vs predicted, and residual distribution.
 
-Military equipment often operates in demanding environments and under intense pressure. Unexpected failures can have severe consequences, including mission disruption, safety hazards, and significant financial costs. Traditional reactive maintenance approaches lead to inefficient resource allocation and prolonged repair times. Predictive maintenance offers a solution by leveraging data to anticipate failures, allowing for scheduled maintenance interventions that optimize equipment uptime and extend asset lifespan.
+## Files in this repo
 
-## Goals
+- `pmme1.ipynb` — The main Jupyter notebook with the end-to-end exploratory workflow and model training/evaluation.
+- `train_FD001.txt` — Training data file used by the notebook (space-separated values).
+- `requirements.txt` — List of Python dependencies with version constraints for reproducibility.
 
-* **Reduce unplanned downtime:** Minimize unexpected equipment failures through accurate predictions.
-* **Optimize maintenance scheduling:** Transition from reactive to proactive maintenance, allowing for efficient resource allocation.
-* **Extend equipment lifespan:** Identify and address potential issues early, preventing catastrophic failures and prolonging asset life.
-* **Improve operational readiness:** Ensure military equipment is consistently available and mission-ready.
-* **Lower maintenance costs:** Reduce emergency repairs, minimize inventory of spare parts, and optimize labor utilization.
+## Notebook: step-by-step (what you'll find inside)
 
-## Data Sources (Potential)
+1. Dependencies are imported: pandas, numpy, matplotlib, seaborn, and scikit-learn.
+2. The dataset is loaded using `pd.read_csv(..., sep=r"\\s+", header=None)` and column names are assigned:
+   - `engine_id`, `cycle`, `op_setting_1..3`, `sensor_1..21`.
+3. RUL target computation:
+   - Compute max cycle per engine and set `RUL = max_cycle - cycle`.
+4. EDA and visualization:
+   - RUL degradation curves for the first engines, histograms of RUL, and correlation heatmap of selected features.
+5. Feature selection:
+   - The notebook filters to a predefined set of features (e.g., `cycle`, `op_setting_1..3`, `sensor_2,3,4,7,8,11,15,17,20,21`).
+6. Train/test split and scaling:
+   - 10% test split, features scaled with `StandardScaler`.
+7. Modeling and evaluation:
+   - Model: `RandomForestRegressor(n_estimators=100, random_state=42)`
+   - Metrics printed: MAE, MSE, RMSE, and R². The notebook's summary reports an example R² ≈ 0.7002 and MAE ≈ 26.66 (these are from the run in the notebook and may vary if you re-run with different random states or after changing features).
+8. Diagnostic plots: residuals, actual vs predicted, and residual distribution.
 
-* **Sensor Data:** Real-time and historical readings from various sensors on military equipment (e.g., temperature, pressure, vibration, current, voltage, fluid levels).
-* **Maintenance Logs:** Detailed records of past maintenance activities, including repairs, replacements, and inspections.
-* **Operational Data:** Information about equipment usage, operating hours, load cycles, and environmental conditions.
-* **Equipment Specifications:** Technical details and design parameters of different military assets.
-* **Failure Codes/Types:** Categorization of past failures for training predictive models.
+## How to run the notebook (Windows PowerShell)
 
-## Methodology
+1. (Optional) Create and activate a virtual environment (recommended):
 
-Our approach will involve the following key steps:
+```powershell
+python -m venv venv; .\\venv\\Scripts\\Activate.ps1
+```
 
-1.  **Data Collection and Integration:** Gather and integrate data from various sources, ensuring data quality and consistency.
-2.  **Exploratory Data Analysis (EDA):** Understand data characteristics, identify trends, outliers, and potential relationships.
-3.  **Feature Engineering:** Create meaningful features from raw data that are indicative of equipment health and potential failures. This may include:
-    * Statistical aggregates (mean, variance, standard deviation, RMS)
-    * Time-series features (trends, seasonality, auto-correlation)
-    * Domain-specific indicators (e.g., oil analysis parameters, vibration spectrum analysis)
-4.  **Model Selection and Training:** Experiment with various machine learning and deep learning models for anomaly detection and time-to-failure prediction. Potential models include:
-    * **Classification Models:** (e.g., Logistic Regression, Support Vector Machines, Random Forests, Gradient Boosting) for predicting imminent failure (binary or multi-class).
-    * **Regression Models:** (e.g., Linear Regression, Ridge, Lasso, Neural Networks) for predicting Remaining Useful Life (RUL).
-    * **Anomaly Detection Models:** (e.g., Isolation Forest, One-Class SVM, Autoencoders) for identifying unusual operating patterns.
-    * **Time-Series Models:** (e.g., ARIMA, Prophet, LSTM) for forecasting sensor readings and identifying deviations.
-5.  **Model Evaluation:** Assess model performance using appropriate metrics (e.g., accuracy, precision, recall, F1-score, RMSE, MAE, R2-score, ROC-AUC).
-6.  **Deployment (Conceptual):** Outline a potential deployment strategy for integrating the predictive maintenance system into existing military operations. This might involve:
-    * **Real-time monitoring dashboards:** Visualizing equipment health and predictions.
-    * **Alerting mechanisms:** Notifying maintenance personnel of potential failures.
-    * **Integration with maintenance management systems (CMMS/EAM).**
-7.  **Continuous Improvement:** Regularly retrain models with new data and adapt to evolving equipment characteristics and operational environments.
+2. Install dependencies using the requirements.txt file:
 
-## Technologies Used
+```powershell
+pip install -r requirements.txt
+```
 
-* **Programming Language:** Python
-* **Data Manipulation:** Pandas, NumPy
-* **Data Visualization:** Matplotlib, Seaborn, Plotly
-* **Machine Learning Frameworks:** Scikit-learn, TensorFlow, Keras, PyTorch
-* **Time-Series Analysis:** Statsmodels, Prophet
-* **(Optional) Big Data Technologies:** Apache Spark (if dealing with very large datasets)
-* **(Optional) Cloud Platforms:** AWS, Azure, GCP (for scalable deployment)
+3. Start Jupyter and open the notebook:
 
-## Project Structure
-![image](https://github.com/user-attachments/assets/546573b9-e5a5-46a6-ae29-9a15ea9780ca)
+```powershell
+jupyter notebook
+```
 
+4. In the notebook UI open `pmme1.ipynb` and run the cells in order. Make sure `train_FD001.txt` is in the same directory as the notebook (it already is in this repo).
 
+## Important notes and suggestions
 
+- The notebook is exploratory and intentionally concise. It uses a fixed, hand-picked feature list. For production or more robust experiments consider:
+  - Adding cross-validation (time-series aware if necessary) and hyperparameter tuning.
+  - Using pipeline objects (scikit-learn Pipeline) to bundle scaling and modeling.
+  - Saving trained models (joblib/pickle) and test predictions for later analysis.
+  - Separating preprocessing, feature engineering, training, and evaluation into modular scripts or notebooks.
 
+- The dataset `train_FD001.txt` in this repo appears to be the well-known CMAPSS FD001 subset (or similar). If you use other files (e.g., FD002/FD003/FD004), update the notebook accordingly.
 
-## Getting Started
+## Reproducibility
 
-To set up the project locally, follow these steps:
+To make experiments reproducible, pin package versions and set random seeds consistently. The notebook uses `random_state=42` for train/test split and RandomForest initialization.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/your-username/predictive-maintenance-military.git](https://github.com/your-username/predictive-maintenance-military.git)
-    cd predictive-maintenance-military
-    ```
-2.  **Create a virtual environment (recommended):**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-    ```
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-4.  **Data Acquisition (Placeholder):** You will need to obtain the necessary military equipment data. Due to the sensitive nature of this data, it will likely not be publicly available. This section would describe how to load the data once it's acquired.
-    ```python
-    # Example: Load your data
-    # df = pd.read_csv('data/raw/your_equipment_data.csv')
-    ```
-5.  **Run Jupyter notebooks for exploration and prototyping:**
-    ```bash
-    jupyter notebook
-    ```
-    Navigate to the `notebooks/` directory and open the relevant notebooks.
+## Contact / Next steps
 
+Potential enhancements for this project:
 
-**Disclaimer:** This project is a conceptual framework for predictive maintenance in a military context. Actual implementation would require access to sensitive data, collaboration with military experts, and adherence to strict security protocols and regulations.
+- Convert the notebook into a cleaner pipeline script (train.py / evaluate.py) and add saving/loading of trained models.
+- Add unit tests for data-loading and basic preprocessing.
+- Create a dashboard for visualizing model predictions and sensor data relationships.
+- Implement additional models (e.g., XGBoost, neural networks) for comparison.
