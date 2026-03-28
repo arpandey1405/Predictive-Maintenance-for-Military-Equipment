@@ -1,4 +1,4 @@
-# Predictive Maintenance — Notebook1: `pmme1.ipynb`
+# Predictive Maintenance — Notebook: `pmme1.ipynb`
 
 This repository contains a single exploratory notebook (`pmme1.ipynb`) and the sample dataset `train_FD001.txt` used to build a baseline Remaining Useful Life (RUL) regression model for equipment (engine) degradation. The README here has been updated to match what the notebook actually does.
 
